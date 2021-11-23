@@ -54,19 +54,46 @@ impl Tile {
     }
 }
 
+fn show_game(mut board: [[Tile; 10]; 10], move_bugs: bool) -> [[Tile; 10]; 10] {
+    let mut rng = rand::thread_rng();
 
-fn board(d: &RaylibDrawHandle) {
+    if move_bugs {
+        for i in 0..(NO_OF_ROWS as usize) {
+            for j in 0..(NO_OF_ROWS as usize) {
+                let tile = board[j][i];
+                if matches!(tile.entity, EntityType::Bug) && matches!(tile.state, TileState::Closed)
+                {
+                    let x = tile.row_index;
+                    let y = tile.col_index;
 
+                    let x_next = (x as i32 + rng.gen_range(0..3) - 1) as i32;
+                    let y_next = (y as i32 + rng.gen_range(0..3) - 1) as i32;
+
+                    let x_next_index = min(max(x_next, 0), NO_OF_ROWS - 1) as usize;
+                    let y_next_index = min(max(y_next, 0), NO_OF_ROWS - 1) as usize;
+
+                    if matches!(board[x_next_index][y_next_index].entity, EntityType::Empty)
+                        && matches!(board[x_next_index][y_next_index].state, TileState::Closed)
+                    {
+                        board[x_next_index][y_next_index].entity = EntityType::Bug;
+                        board[j][i].entity = EntityType::Empty;
+                    }
+                }
+            }
+        }
+    }
+
+    board
 }
 
 fn main() {
     let game_state = GameState::Menu;
+    let (mut rl, thread) = raylib::init().size(800, 800).title("Bugsweeper").build();
 
     let no_of_bugs: i32 = 5;
     let no_of_mines: i32 = 5;
 
     let mut rng = rand::thread_rng();
-    let (mut rl, thread) = raylib::init().size(800, 800).title("Bugsweeper").build();
 
     rl.set_target_fps(60);
 
@@ -154,30 +181,7 @@ fn main() {
             }
         }
 
-        if move_bugs {
-            for i in 0..(NO_OF_ROWS as usize) {
-                for j in 0..(NO_OF_ROWS as usize) {
-                    let tile = board[j][i];
-                    if matches!(tile.entity, EntityType::Bug) && matches!(tile.state, TileState::Closed) {
-                        let x = tile.row_index;
-                        let y = tile.col_index;
-
-                        let x_next = (x as i32 + rng.gen_range(0..3) - 1) as i32;
-                        let y_next = (y as i32 + rng.gen_range(0..3) - 1) as i32;
-
-                        let x_next_index = min(max(x_next, 0), NO_OF_ROWS - 1) as usize;
-                        let y_next_index = min(max(y_next, 0), NO_OF_ROWS - 1) as usize;
-
-                        if matches!(board[x_next_index][y_next_index].entity, EntityType::Empty)
-                            && matches!(board[x_next_index][y_next_index].state, TileState::Closed)
-                        {
-                            board[x_next_index][y_next_index].entity = EntityType::Bug;
-                            board[j][i].entity = EntityType::Empty;
-                        }
-                    }
-                }
-            }
-        }
+        board = show_game(board, move_bugs);
 
         for i in 0..(NO_OF_ROWS as usize) {
             let row = board[i];
