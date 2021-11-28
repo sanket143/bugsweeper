@@ -20,10 +20,10 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: armv7-unknown-linux-gnueabihf
+          target: x86_64-unknown-linux-gnu
           override: true
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: build
-          args: --target armv7-unknown-linux-gnueabihf
+          args: --target x86_64-unknown-linux-gnu
