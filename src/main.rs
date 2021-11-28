@@ -1,4 +1,5 @@
 mod game;
+mod game_over;
 mod how_to_play;
 mod menu;
 mod types;

@@ -8,6 +8,7 @@ const SCREEN_SIZE: i32 = 800;
 const BOX_SIZE: i32 = (SCREEN_SIZE - (NO_OF_ROWS + 1) * GAP) / 10;
 const FONT_SIZE: i32 = 30;
 
+use crate::game_over::game_over_loop;
 use crate::types::{EntityType, GameState, Tile, TileState};
 
 fn show_game(mut board: [[Tile; 10]; 10], move_bugs: bool) -> [[Tile; 10]; 10] {
@@ -96,20 +97,39 @@ pub fn game_loop(game_state: &mut GameState, rl: &mut RaylibHandle, thread: &Ray
         let mouse_x = mouse_pos.x as i32;
         let mouse_y = mouse_pos.y as i32;
 
+        let mut is_game_complete = true;
+
+        let is_game_over = {
+            let mut is_game_over = false;
+
+            for i in 0..(NO_OF_ROWS as usize) {
+                let row = board[i];
+
+                for j in 0..(row.len()) {
+                    let tile = row[j];
+
+                    if matches!(tile.state, TileState::Opened)
+                        && matches!(tile.entity, EntityType::Mine)
+                    {
+                        is_game_over = true;
+                        is_game_complete = false;
+                    } else if !matches!(tile.state, TileState::Opened) && !matches!(tile.entity, EntityType::Mine) {
+                        is_game_complete = false;
+                    }
+                }
+            }
+
+            is_game_over
+        };
+
         // if left click is pressed && mouse is over a tile 'A' then tile 'A' should turn to 'grey'
-        if d.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+        if d.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) && !is_game_over && !is_game_complete {
             intended_state = TileState::Active;
         }
 
-        if d.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) {
+        if d.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) && !is_game_over && !is_game_complete {
             intended_state = TileState::Opened;
         }
-
-        // match game_state {
-        //     GameState::Menu => {
-
-        //     }
-        // }
 
         for i in 0..(NO_OF_ROWS as usize) {
             let row = board[i];
@@ -204,6 +224,23 @@ pub fn game_loop(game_state: &mut GameState, rl: &mut RaylibHandle, thread: &Ray
                     _ => {}
                 }
             }
+        }
+
+        if is_game_over {
+            *game_state = GameState::GameOver;
+
+            game_over_loop(game_state, &mut d);
+        } else if is_game_complete {
+            *game_state = GameState::GameComplete;
+            game_over_loop(game_state, &mut d);
+        }
+
+        if matches!(game_state, GameState::PlayAgain) {
+            *game_state = GameState::Start;
+            break;
+        }
+        if matches!(game_state, GameState::Menu) {
+            break;
         }
 
         if d.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) {

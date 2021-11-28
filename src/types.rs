@@ -9,9 +9,10 @@ pub enum EntityType {
 pub enum GameState {
     Menu,
     Start,
-    Playing,
     HowToPlay,
+    PlayAgain,
     GameOver,
+    GameComplete,
     Quit,
 }
 
