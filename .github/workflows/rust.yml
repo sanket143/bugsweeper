@@ -14,6 +14,8 @@ jobs:
     name: Linux ARMv7
     runs-on: ubuntu-latest
     steps:
+      - name: Install required libraries
+        run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
@@ -25,33 +27,3 @@ jobs:
           use-cross: true
           command: build
           args: --target armv7-unknown-linux-gnueabihf
-  aarch64-apple-darwin:
-    name: ARM64 macOS (11.0+, Big Sur+)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: aarch64-apple-darwin
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --target aarch64-apple-darwin
-  i686-pc-windows-gnu:
-    name: 32-bit MinGW (Windows 7+)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: i686-pc-windows-gnu
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --target i686-pc-windows-gnu
