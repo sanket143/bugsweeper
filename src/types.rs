@@ -10,6 +10,7 @@ pub enum GameState {
     Menu,
     Start,
     Playing,
+    HowToPlay,
     GameOver,
     Quit,
 }

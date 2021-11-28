@@ -1,9 +1,11 @@
-use raylib::consts::KeyboardKey;
-
 mod game;
+mod how_to_play;
+mod menu;
 mod types;
 
 use game::game_loop;
+use how_to_play::how_to_play_loop;
+use menu::menu_loop;
 use types::GameState;
 
 fn main() {
@@ -13,17 +15,10 @@ fn main() {
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
-        game_loop(&mut game_state, &mut rl, &thread);
-
-        if rl.is_key_pressed(KeyboardKey::KEY_Q) {
-            game_state = GameState::Quit;
-
-            println!("Quitting game");
-            break;
-        }
-
-        println!("{:?}", game_state);
         match game_state {
+            GameState::Menu => menu_loop(&mut game_state, &mut rl, &thread),
+            GameState::Start => game_loop(&mut game_state, &mut rl, &thread),
+            GameState::HowToPlay => how_to_play_loop(&mut game_state, &mut rl, &thread),
             GameState::Quit => break,
             _ => {}
         }

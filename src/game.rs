@@ -79,7 +79,7 @@ pub fn game_loop(game_state: &mut GameState, rl: &mut RaylibHandle, thread: &Ray
         board[x][y].entity = EntityType::Mine;
     }
 
-    while !rl.window_should_close() {
+    loop {
         let mut d = rl.begin_drawing(&thread);
         let mut move_bugs = false;
 
@@ -164,7 +164,7 @@ pub fn game_loop(game_state: &mut GameState, rl: &mut RaylibHandle, thread: &Ray
                                 d.draw_rectangle(x, y, BOX_SIZE, BOX_SIZE, Color::GOLD);
                             }
                             EntityType::Empty => {
-                                d.draw_rectangle(x, y, BOX_SIZE, BOX_SIZE, Color::GREEN);
+                                d.draw_rectangle(x, y, BOX_SIZE, BOX_SIZE, Color::LIME);
                             }
                         }
 
