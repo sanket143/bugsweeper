@@ -2,9 +2,8 @@ name: Rust
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - "v*.*.*"
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install required libraries
-        run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev xorg-dev libxss-dev libxxf86vm-dev libxkbfile-dev libxv-dev
+        run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
@@ -26,3 +25,8 @@ jobs:
         with:
           command: build
           args: --target x86_64-unknown-linux-gnu --release
+      - run: cp target/release/bugsweeper bugsweeper.x86_64
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: bugsweeper.x86_64
