@@ -5,5 +5,12 @@
 
 Bugsweeper is like Minesweeper but along with mines, it also includes bugs.
 The difference between bugs and mines is a bug can move around the grid, in close tiles,
-while Mines cannot. The goal is to kill all the mines and uncover all the tiles, and avoid mines.
+while Mines cannot. The goal is to kill all the mines, uncover all the safe tiles, and avoid mines.
 Opening a mine will end the game.
+
+# Compiling
+It requires cargo (Rust's package manager)
+```
+$ cargo run # should just run the game
+$ cargo build --release # to create a release binary in ./target/release
+```
