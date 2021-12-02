@@ -30,3 +30,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: bugsweeper.x86_64
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bugsweeper.x86_64
+          path: target/release/bugsweeper
