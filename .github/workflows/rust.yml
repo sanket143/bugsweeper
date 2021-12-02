@@ -11,8 +11,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  linux_arm7:
-    name: Linux ARMv7
+  linux:
+    name: Linux
     runs-on: ubuntu-latest
     steps:
       - name: Install required libraries
@@ -36,4 +36,21 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: bugsweeper.x86_64
-
+  windows:
+    name: Windows
+    runs-on: windows
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-gnu
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Bugsweeper-x86_64.exe
+          path: target/release/bugsweeper.exe
